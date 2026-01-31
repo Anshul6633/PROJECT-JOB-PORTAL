@@ -9,6 +9,7 @@ import ViewApplications from './pages/ViewApplications'
 
 import Home from './pages/home'
 import Dashboard from './pages/Dashboard'
+import DashboardHome from './pages/DashboardHome'
 import RecruiterLogin from './components/RecruiterLogin'
 import { useContext } from 'react'
 import { AppContext } from './context/AppContext.jsx'
@@ -28,10 +29,13 @@ export const App = () => {
         <Route path='/' element={<Home />} />
         <Route path='/apply-job/:id' element={<ApplyJob />} />
         <Route path='/applications' element={<Applications />} />
-        <Route path='/Dashboard' element={<Dashboard />} />
-        <Route path='/ManageJobs' element={<ManageJobs />} />
-        <Route path='/AddJobs' element={<AddJobs />} />
-        <Route path='/ViewApplications' element={<ViewApplications />} />
+        <Route path='/dashboard' element={<Dashboard />}>
+          <Route index element={<DashboardHome />} />
+          <Route path='manage-jobs' element={<ManageJobs />} />
+          <Route path='add-job' element={<AddJobs />} />
+          <Route path='view-applications' element={<ViewApplications />} />
+          <Route path='analytics' element={<div>Analytics Page</div>} />
+        </Route>
 
       </Routes>
     </div>
