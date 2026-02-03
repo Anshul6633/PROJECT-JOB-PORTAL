@@ -11,7 +11,7 @@ export const clerkwebhooks = async(req,res)=>{
         const wh = new Webhook(process.env.Clerk_Webhook_Secret);
         //get the payload
       
-        await wh.verify(Json.stringify(req.body),{
+        await wh.verify(JSON.stringify(req.body),{
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"],
