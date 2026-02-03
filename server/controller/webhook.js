@@ -1,6 +1,6 @@
 import { Webhook } from "svix";
 import User from "../model/user.js";
-import Json from "json-bigint";
+
 // express import removed (not used)
 
 //API controller  Function to manage clerk  user with database

@@ -26,7 +26,10 @@ app.get("/", (req, res) =>res.send("Api is running"));
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 
+
 });
+app.get("/checkhealth", (req, res) => res.json({message:"Server is healthy"}));
+
 app.post("/webhook", clerkwebhooks);
 //server listen
 
