@@ -18,7 +18,7 @@ export const clerkwebhooks = async(req,res)=>{
         });
 
         //verify the payload
-        const {type, data} = req.body;
+        const {data,type} = req.body;
 
         //switch case to handle different event types
         switch (type) {
