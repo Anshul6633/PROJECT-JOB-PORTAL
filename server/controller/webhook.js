@@ -9,7 +9,7 @@ import User from "../model/user.js";
 export const clerkwebhooks = async(req,res)=>{
     try {
         //create svix instance  with clerk webhook secret
-        const wh = new Webhook(process.env.Clerk_Webhook_Secret);
+        const wh = new Webhook (process.env.Clerk_Webhook_Secret);
         //get the payload
 
         // Use the raw request body (if available) for verification; fall back to the parsed body.
