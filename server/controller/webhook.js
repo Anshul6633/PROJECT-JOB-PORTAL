@@ -1,6 +1,7 @@
 import { Webhook } from "svix";
 import User from "../model/user.js";
 
+
 // express import removed (not used)
 
 //API controller  Function to manage clerk  user with database
@@ -21,16 +22,17 @@ export const clerkwebhooks = async(req,res)=>{
         });
 
         //verify the payload
-        const {data,type} = req.body;
+        const { type, data } = req.body;
+        const eventType = (type || '').toLowerCase();
 
         //switch case to handle different event types
-        switch (type) {
+        switch (eventType) {
             case "user.created":
                {
                            const userData = {
                             _id:data.id,
-                            email:data.email_addresses[0].email_address,
-                            name:data.first_name + " " + data.last_name,
+                             name:data.first_name + " " + data.last_name,
+                              email:data.email_addresses[0].email_address,
                             image:data.profile_image_url,
                             resume:"",
                            }
@@ -38,7 +40,7 @@ export const clerkwebhooks = async(req,res)=>{
                            res.json({message:"User created successfully"})
                            break;
                }
-             case "user.updated":
+                 case "user.updated":
                 {
                      const userData = {
                             
@@ -51,7 +53,7 @@ export const clerkwebhooks = async(req,res)=>{
                            res.json({message:"User updated successfully"})
                            break;
                 }
-             case "user.deleted":  
+                 case "user.deleted":  
              {
                 await User.findByIdAndDelete(data.id);
                 res.json({message:"User deleted successfully"}) 
@@ -63,8 +65,13 @@ export const clerkwebhooks = async(req,res)=>{
         }
         
     } catch (error) {
-        console.log("Error in clerk webhook:",error);
-        res.status(400).json({message:"Invalid webhook"})
-        
+        console.error("Error in clerk webhook:", error);
+        console.error("Svix headers:", {
+            id: req.headers["svix-id"],
+            timestamp: req.headers["svix-timestamp"],
+            signature: req.headers["svix-signature"],
+        });
+        console.error("raw payload snippet:", req.rawBody ? req.rawBody.toString().slice(0,200) : JSON.stringify(req.body).slice(0,200));
+        res.status(400).json({ message: "Invalid webhook" });
     }
 }

@@ -31,7 +31,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 });
 app.get("/checkhealth", (req, res) => res.json({message:"Server is healthy"}));
 
-app.post("/webhook", clerkwebhooks);
+app.post('/webhook', clerkwebhooks);
 //server listen
 
 //POrt
