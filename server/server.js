@@ -1,3 +1,4 @@
+
 import express from "express";
 import './config/instrument.js'
 import * as sentry from "@sentry/node";
@@ -10,10 +11,12 @@ import { clerkwebhooks } from "./controller/webhook.js";
 //INITIALIZE SERVER
 const app = express();
 
+//connect to db
+await connectdb()
+
+// force public DNS for this Node process (must run before any DNS lookups / mongoose.connect)
 
 
- //connect to db
- await connectdb()
 //Middleware
 app.use(cors());
 app.use(express.json());

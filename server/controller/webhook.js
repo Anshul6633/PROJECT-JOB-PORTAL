@@ -1,5 +1,7 @@
 import { Webhook } from "svix";
 import User from "../model/user.js";
+import Json from "json-bigint";
+// express import removed (not used)
 
 //API controller  Function to manage clerk  user with database
 
@@ -30,7 +32,7 @@ export const clerkwebhooks = async(req,res)=>{
                             resume:"",
                            }
                            await User.create(userData);
-                           req.Json({message:"User created successfully"})
+                           res.json({message:"User created successfully"})
                            break;
                }
              case "user.updated":
@@ -43,23 +45,23 @@ export const clerkwebhooks = async(req,res)=>{
                         
                            }
                            await User.findByIdAndUpdate(data.id,userData)
-                           req.Json({message:"User updated successfully"})
+                           res.json({message:"User updated successfully"})
                            break;
                 }
              case "user.deleted":  
              {
                 await User.findByIdAndDelete(data.id);
-                req.Json({message:"User deleted successfully"}) 
+                res.json({message:"User deleted successfully"}) 
                 break;
              }
              default:
-                req.Json({message:"Event type not handled"})
+                res.json({message:"Event type not handled"})
                 break;
         }
         
     } catch (error) {
         console.log("Error in clerk webhook:",error);
-        res.status(400).Json({message:"Invalid webhook"})
+        res.status(400).json({message:"Invalid webhook"})
         
     }
 }
