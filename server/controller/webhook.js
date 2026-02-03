@@ -7,20 +7,33 @@ export const clerkwebhooks = async (req, res) => {
       process.env.CLERK_WEBHOOK_SECRET || process.env.Clerk_Webhook_Secret;
 
     if (!webhookSecret) {
-      throw new Error("Missing CLERK_WEBHOOK_SECRET (or Clerk_Webhook_Secret)");
+      console.error("Webhook secret is missing in environment variables");
+      return res.status(500).json({ 
+        message: "Webhook configuration error",
+        error: "Missing webhook secret" 
+      });
+    }
+
+    // Check if req.body exists and is a Buffer
+    if (!req.body || !Buffer.isBuffer(req.body)) {
+      console.error("Invalid request body:", typeof req.body);
+      return res.status(400).json({ 
+        message: "Invalid request body",
+        error: "Body must be raw buffer" 
+      });
     }
 
     const wh = new Webhook(webhookSecret);
+    const raw = req.body.toString("utf8");
 
-    const raw = req.body.toString();
-
-    const event = await wh.verify(raw, {
+    // Verify webhook signature
+    const payload = wh.verify(raw, {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
       "svix-signature": req.headers["svix-signature"],
     });
 
-    const { type, data } = event || {};
+    const { type, data } = payload;
     const eventType = (type || "").toLowerCase();
 
     switch (eventType) {
@@ -54,10 +67,18 @@ export const clerkwebhooks = async (req, res) => {
       }
 
       default:
+        console.log("Unhandled event type:", eventType);
         return res.json({ message: "Event type not handled" });
     }
   } catch (error) {
-    console.error("Error in clerk webhook:", error.message);
-    return res.status(400).json({ message: "Invalid webhook" });
+    console.error("Error in clerk webhook:");
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("Headers:", req.headers);
+    
+    return res.status(400).json({ 
+      message: "Invalid webhook",
+      error: error.message 
+    });
   }
 };
