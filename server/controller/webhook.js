@@ -3,21 +3,24 @@ import User from "../model/user.js";
 
 export const clerkwebhooks = async (req, res) => {
   try {
-    if (!process.env.Clerk_Webhook_Secret) {
-      throw new Error("Missing CLERK_WEBHOOK_SECRET");
+    const webhookSecret =
+      process.env.CLERK_WEBHOOK_SECRET || process.env.Clerk_Webhook_Secret;
+
+    if (!webhookSecret) {
+      throw new Error("Missing CLERK_WEBHOOK_SECRET (or Clerk_Webhook_Secret)");
     }
 
-    const wh = new Webhook(process.env.Clerk_Webhook_Secret);
+    const wh = new Webhook(webhookSecret);
 
     const raw = req.body.toString();
 
-    await wh.verify(raw, {
+    const event = await wh.verify(raw, {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
       "svix-signature": req.headers["svix-signature"],
     });
 
-    const { type, data } = JSON.parse(raw);
+    const { type, data } = event || {};
     const eventType = (type || "").toLowerCase();
 
     switch (eventType) {
