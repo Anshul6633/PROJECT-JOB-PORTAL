@@ -10,8 +10,11 @@ export const clerkwebhooks = async(req,res)=>{
         //create svix instance  with clerk webhook secret
         const wh = new Webhook(process.env.Clerk_Webhook_Secret);
         //get the payload
-      
-        await wh.verify(JSON.stringify(req.body),{
+
+        // Use the raw request body (if available) for verification; fall back to the parsed body.
+        const raw = req.rawBody ? req.rawBody.toString() : JSON.stringify(req.body);
+
+        await wh.verify(raw,{
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"],

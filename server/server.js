@@ -19,7 +19,8 @@ await connectdb()
 
 //Middleware
 app.use(cors());
-app.use(express.json());
+// Preserve raw body for webhook signature verification (Svix requires the exact raw payload)
+app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf } }));
 
 //route
 app.get("/", (req, res) =>res.send("Api is running"));
@@ -35,8 +36,8 @@ app.post("/webhook", clerkwebhooks);
 
 //POrt
 const PORT = process.env.PORT || 5000;
+sentry.setupConnectErrorHandler(app);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-sentry.setupConnectErrorHandler(app);
 
 
